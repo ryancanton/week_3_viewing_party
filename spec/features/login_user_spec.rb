@@ -1,11 +1,3 @@
-# As a registered user
-# When I visit the landing page `/`
-# I see a link for "Log In"
-# When I click on "Log In"
-# I'm taken to a Log In page ('/login') where I can input my unique email and password.
-# When I enter my unique email and correct password 
-# I'm taken to my dashboard page
-
 require 'rails_helper'
 
 RSpec.describe 'User Login' do
@@ -25,5 +17,20 @@ RSpec.describe 'User Login' do
     expect(current_path).to eq(user_path(user))
 
     expect(page).to have_content("Welcome, #{user.name}")
+  end
+
+  it 'does not log in a user with bad credentials' do
+    user = User.create(name: 'Meg', email: 'meg@test.com', password: 'password123', password_confirmation: 'password123')
+
+    visit login_path
+  
+    fill_in :email, with: user.email
+    fill_in :password, with: "incorrect password"
+  
+    click_on "Log In"
+  
+    expect(current_path).to eq(login_path)
+  
+    expect(page).to have_content("Sorry, your credentials are bad.")
   end
 end
